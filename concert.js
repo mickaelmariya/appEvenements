@@ -1,6 +1,11 @@
 // Récupération des pièces depuis le fichier JSON
-const pieces = await fetch("pieces-autos.json").then(pieces => pieces.json());
- 
+const pieces = await fetch("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?limit=20&refine=keywords_fr%3A%22concert%22&refine=location_countrycode%3A%22FR%22&refine=lastdate_begin%3A%222024%22")
+const data = await request.json()
+
+console.log("data", data)
+data.results
+
+
 // Fonction qui génère toute la page web
 function genererPieces(pieces) {
 for (let i = 0; i < pieces.length; i++) {
