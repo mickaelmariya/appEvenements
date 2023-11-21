@@ -1,73 +1,54 @@
-// Fonction qui génère toute la page web
-function genererConcert(concert) {
-for (let i = 0; i < pieces.length; i++) {
-    // Création des balises
-    const article = [i];
-    const sectionFiches = document.querySelector(".fiches");
-    // Création d'une balise dédiée à une pièce automobile
-    const pieceElement = document.createElement("article");
-  
-    const imageElement = document.createElement("img");
-    imageElement.src = article.image;
-    const nomElement = document.createElement("h2");
-    nomElement.innerText = article.nom;
-    const prixElement = document.createElement("p");
-    prixElement.innerText = `Prix: ${article.prix} € (${
-      article.prix < 35 ? "€" : "€€€"
-    })`;
-    const categorieElement = document.createElement("p");
-    categorieElement.innerText = article.categorie ?? "";
-    const disponibiliteElement = document.createElement("p");
-    disponibiliteElement.innerText = article.disponibilite
-      ? "En stock"
-      : "Rupture de stock";
-    const descriptionElement = document.createElement("p");
-    descriptionElement.innerText = article.description ?? "";
-  
-    sectionFiches.appendChild(pieceElement);
-    pieceElement.appendChild(imageElement);
-    pieceElement.appendChild(nomElement);
-    pieceElement.appendChild(prixElement);
-  
-    pieceElement.appendChild(categorieElement);
-    pieceElement.appendChild(disponibiliteElement);
-    pieceElement.appendChild(descriptionElement);
-}
-}
- 
-// Premier affichage de la page
-genererPieces();
- 
-// Ajout du listener pour trier les pièces par ordre de prix croissant
-const boutonTrier = document.querySelector(".btn-trier");
-boutonTrier.addEventListener("click", function () {
-   const piecesOrdonnees = Array.from(pieces)
-   piecesOrdonnees.sort(function (a, b) {
-       return a.prix - b.prix;
-   });
-  // Effacement de l'écran et regénération de la page
-  document.querySelector(".fiches").innerHTML = "";
-  genererPieces(piecesOrdonnees);
-});
+// Utilisez la syntaxe async/await pour traiter de manière asynchrone la requête fetch
+const response = await fetch(
+  "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?limit=20&refine=keywords_fr%3A%22concert%22&refine=location_countrycode%3A%22FR%22&refine=lastdate_begin%3A%222024%22"
+);
 
-const boutonOrdonner = document.querySelector(".btn-ordonner");
-boutonOrdonner.addEventListener("click", function () {
-    const piecesOrdonnees1 = Array.from(pieces)
-    piecesOrdonnees1.sort(function (a, b) {
-      return b.prix - a.prix;
-    });
-  // Effacement de l'écran et regénération de la page
-  document.querySelector(".fiches").innerHTML = "";
-  genererPieces(piecesOrdonnees1);
-  });
- 
-// Ajout du listener pour filtrer les pièces non abordables
-const boutonFiltrer = document.querySelector(".btn-filtrer");
-boutonFiltrer.addEventListener("click", function () {
-   const piecesFiltrees = pieces.filter(function (piece) {
-       return piece.disponibilite;
-   });
-   // Effacement de l'écran et regénération de la page avec les pièces filtrées uniquement
-  document.querySelector(".fiches").innerHTML = "";
-  genererPieces(piecesFiltrees);
-});
+/*
+// Vérifiez si la requête a réussi (status 200-299)
+if (!response.ok) {
+  throw new Error(Erreur HTTP! Statut: ${response.status});
+}*/
+
+// Utilisez la fonction json() pour extraire les données JSON
+const data = await response.json();
+
+const totalCount = data.total_count;
+const totalCountElement = document.createElement("total_count");
+totalCountElement.innerText = totalCount;
+const sectionFiches = document.querySelector(".fiches")
+sectionFiches.appendChild(totalCountElement);
+console.log(totalCountElement)
+
+for (let i = 0; i < data.results.length; i++) {
+  const ficheConcert = document.createElement("article")
+  sectionFiches.appendChild(ficheConcert);
+
+  const titreEvenement = document.createElement("h2")
+  titreEvenement.innerText = data.results[i].title_fr;
+  ficheConcert.appendChild(titreEvenement);
+
+  const imageEvenement = document.createElement("img")
+  imageEvenement.src = data.results[i].originalimage;
+  ficheConcert.appendChild(imageEvenement);
+  console.log("image", data.results[i].originalimage);
+
+  const infoConcert = document.createElement("p")
+  infoConcert.innerText = data.results[i].description_fr;
+  ficheConcert.appendChild(infoConcert);
+
+  const keyWordConcert = document.createElement("p")
+  keyWordConcert.innerText = data.results[i].keywords_fr;
+  ficheConcert.appendChild(keyWordConcert);
+
+  const adresseConcert = document.createElement("p")
+  adresseConcert.innerText = data.results[i].location_address;
+  ficheConcert.appendChild(adresseConcert);
+
+  const regionConcert = document.createElement("p")
+  regionConcert.innerText = data.results[i].location_region;
+  ficheConcert.appendChild(regionConcert);
+
+  const dateHeure = document.createElement("p")
+  dateHeure.innerText=data.results[i].daterange_fr;
+  ficheConcert.appendChild(dateHeure);
+}
