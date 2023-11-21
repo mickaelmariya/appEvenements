@@ -1,5 +1,7 @@
 try {
-    const response = await fetch("https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records?limit=20&refine=keywords_fr%3A%22concert%22&refine=location_countrycode%3A%22FR%22&refine=lastdate_begin%3A%222024%22");
+    const response = await fetch(
+        "https://public.opendatasoft.com/explore/dataset/evenements-publics-openagenda/api/?disjunctive.keywords_fr&disjunctive.location_city&disjunctive.location_department&disjunctive.location_region&disjunctive.location_countrycode&refine.keywords_fr=concert&refine.location_countrycode=FR&refine.lastdate_begin=2023"
+        );
   
     if (!response.ok) {
       throw new Error(`Erreur de réseau - ${response.status}`);
